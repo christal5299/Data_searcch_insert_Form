@@ -1,0 +1,127 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace App_info
+{
+    public partial class Insert_info_Form : Form
+    {
+        private string Software_name, System, Category, Language, Type, Source_IP, Location_folder, 
+            Manual_folder, Server_IP, SQL_database, SQL_username, SQL_password, Developer, Remark;
+
+        private void save_btn_Click(object sender, EventArgs e)
+        {
+            Insert_info();
+        }
+
+        public Insert_info_Form(Soft_info_lookup sfl)
+        {
+            InitializeComponent();
+        }
+
+        public void Insert_info()
+        {
+            Software_name = software.Text;
+            System = system1.Text;
+            Category = category1.Text;
+            Language = language.Text;
+            if (string.IsNullOrEmpty(type_box.Text))
+                Type = "";
+            else
+                Type = type_box.SelectedItem.ToString();
+            Source_IP = src_ip.Text;
+            Location_folder = location_f.Text;
+            Manual_folder = manual_f.Text;
+            Server_IP = server_ip1.Text;
+            SQL_database = sql_db.Text;
+            SQL_username = sql_usr.Text;
+            SQL_password = sql_pwd.Text;
+            Developer = developer1.Text;
+            Remark = remark1.Text;
+
+            Check_Message();
+
+            SqlConnection SQLcnn = new SqlConnection(@"Data Source=172.16.216.40; Initial Catalog=Info; User ID=sa; Password=sl78_host;");
+            SqlCommand cmd;
+            SqlDataAdapter SQLadapter;
+            string queryString;
+
+            try
+            {
+                SQLcnn.Open();
+                queryString = "INSERT INTO Apps_Info (Software_name, System, Category, Language, Type, Source_IP, Location_folder, Manual_folder," +
+                    "Server_IP, SQL_database, SQL_username, SQL_password, Developer, Remark) VALUES('" + Software_name + "','" + System + "','" +
+                    Category + "','" + Language + "','" + Type + "','" + Source_IP + "','" + Location_folder + "','" + Manual_folder +
+                    "','" + Server_IP + "','" + SQL_database + "','" + SQL_username + "','" + SQL_password + "','" + Developer + "','" + Remark + "')";
+
+                cmd = new SqlCommand(queryString, SQLcnn);
+                cmd.ExecuteNonQuery();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                SQLcnn.Close();
+            }
+
+            MessageBox.Show("Insert new data Successful");
+            Clear_textbox(this);
+            //this.Close();
+        }
+
+        public void Check_Message()
+        {
+            if (string.IsNullOrEmpty(Software_name))
+            {
+                MessageBox.Show("Name cannot be empty.");
+                return;
+            }
+            if (string.IsNullOrEmpty(System))
+            {
+                MessageBox.Show("System cannot be empty.");
+                return;
+            }
+            if (string.IsNullOrEmpty(Source_IP))
+            {
+                MessageBox.Show("Source IP cannot be empty.");
+                return;
+            }
+            if (string.IsNullOrEmpty(Location_folder))
+            {
+                MessageBox.Show("Location folder cannot be empty.");
+                return;
+            }
+            if (string.IsNullOrEmpty(Server_IP))
+            {
+                MessageBox.Show("Server IP cannot be empty.");
+                return;
+            }
+            if (string.IsNullOrEmpty(SQL_database))
+            {
+                MessageBox.Show("Database name cannot be empty.");
+                return;
+            }
+        }
+
+        void Clear_textbox(Control con)
+        {
+            foreach (Control c in con.Controls)
+            {
+                if (c is TextBox)
+                    ((TextBox)c).Clear();
+                else
+                    Clear_textbox(c);
+            }
+        }
+
+    }
+}
