@@ -1,0 +1,119 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace App_info
+{
+    public partial class App_detail : Form
+    {
+        private string autoID, Software_name, System, Category, Language, Type, Source_IP, Location_folder,
+            Manual_folder, Server_IP, SQL_database, SQL_username, SQL_password, Developer, Remark;
+
+        private void update_btn_Click(object sender, EventArgs e)
+        {
+            Update_info();
+        }
+
+        public App_detail(Soft_info_lookup sfl)
+        {
+            InitializeComponent();
+        }
+
+        public void Update_info()
+        {
+            autoID = autoKey.Text; // auto increment primary key
+            Software_name = software.Text;
+            System = system1.Text;
+            Category = category1.Text;
+            Language = language.Text;
+            if (string.IsNullOrEmpty(type_box.Text))
+                Type = "";
+            else
+                Type = type_box.SelectedItem.ToString();
+            Source_IP = src_ip.Text;
+            Location_folder = location_f.Text;
+            Manual_folder = manual_f.Text;
+            Server_IP = server_ip1.Text;
+            SQL_database = sql_db.Text;
+            SQL_username = sql_usr.Text;
+            SQL_password = sql_pwd.Text;
+            Developer = developer1.Text;
+            Remark = remark1.Text;
+
+            Check_Message();
+            SQL_action();
+        }
+
+        public void SQL_action()
+        {
+            SqlConnection SQLcnn = new SqlConnection(@"Data Source=172.16.216.40; Initial Catalog=Info; User ID=sa; Password=sl78_host;");
+            SqlCommand cmd;
+            string queryString;
+
+            try
+            {
+                SQLcnn.Open();
+                queryString = "UPDATE App_keys SET [Software_name] = '" + Software_name + "', [System] ='" + System +
+                    "', [Category] = '" + Category + "', [Language] = '" + Language + "', [Type] = '" + Type + "', [Source_IP] = '" + Source_IP +
+                    "', [Location_folder] = '" + Location_folder + "', [Manual_folder] = '" + Manual_folder +
+                    "', [Server_IP] = '" + Server_IP + "', [SQL_database] = '" + SQL_database + "', [SQL_username] = '" + SQL_username +
+                    "', [SQL_password] = '" + SQL_password + "', [Developer] = '" + Developer + "', [Remark] = '" + Remark + "'" +
+                    "WHERE [key] = '" + autoID + "'";
+
+                cmd = new SqlCommand(queryString, SQLcnn);
+                cmd.ExecuteNonQuery();
+
+                MessageBox.Show("Update data Successfully");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                SQLcnn.Close();
+            }
+        }
+
+        public void Check_Message()
+        {
+            if (string.IsNullOrEmpty(Software_name))
+            {
+                MessageBox.Show("Name cannot be empty.");
+                return;
+            }
+            if (string.IsNullOrEmpty(System))
+            {
+                MessageBox.Show("System cannot be empty.");
+                return;
+            }
+            if (string.IsNullOrEmpty(Source_IP))
+            {
+                MessageBox.Show("Source IP cannot be empty.");
+                return;
+            }
+            if (string.IsNullOrEmpty(Location_folder))
+            {
+                MessageBox.Show("Location folder cannot be empty.");
+                return;
+            }
+            if (string.IsNullOrEmpty(Server_IP))
+            {
+                MessageBox.Show("Server IP cannot be empty.");
+                return;
+            }
+            if (string.IsNullOrEmpty(SQL_database))
+            {
+                MessageBox.Show("Database name cannot be empty.");
+                return;
+            }
+        }
+    }
+}
