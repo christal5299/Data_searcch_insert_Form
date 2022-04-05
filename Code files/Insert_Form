@@ -47,16 +47,22 @@ namespace App_info
             Remark = remark1.Text;
 
             Check_Message();
+            SQL_action();
 
+            Clear_textbox(this);
+            ////this.Close();
+        }
+
+        public void SQL_action()
+        {
             SqlConnection SQLcnn = new SqlConnection(@"Data Source=172.16.216.40; Initial Catalog=Info; User ID=sa; Password=sl78_host;");
             SqlCommand cmd;
-            SqlDataAdapter SQLadapter;
             string queryString;
 
             try
             {
                 SQLcnn.Open();
-                queryString = "INSERT INTO Apps_Info (Software_name, System, Category, Language, Type, Source_IP, Location_folder, Manual_folder," +
+                queryString = "INSERT INTO App_keys (Software_name, System, Category, Language, Type, Source_IP, Location_folder, Manual_folder," +
                     "Server_IP, SQL_database, SQL_username, SQL_password, Developer, Remark) VALUES('" + Software_name + "','" + System + "','" +
                     Category + "','" + Language + "','" + Type + "','" + Source_IP + "','" + Location_folder + "','" + Manual_folder +
                     "','" + Server_IP + "','" + SQL_database + "','" + SQL_username + "','" + SQL_password + "','" + Developer + "','" + Remark + "')";
@@ -64,7 +70,7 @@ namespace App_info
                 cmd = new SqlCommand(queryString, SQLcnn);
                 cmd.ExecuteNonQuery();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
@@ -73,9 +79,7 @@ namespace App_info
                 SQLcnn.Close();
             }
 
-            MessageBox.Show("Insert new data Successful");
-            Clear_textbox(this);
-            //this.Close();
+            MessageBox.Show("Insert new data Successfully");
         }
 
         public void Check_Message()
