@@ -28,7 +28,7 @@ namespace App_info
         private void DisplayData()
         {
             SQLcnn.Open();
-            SQLadapt = new SqlDataAdapter("SELECT * FROM Apps_Info ", SQLcnn);
+            SQLadapt = new SqlDataAdapter("SELECT * FROM App_keys ", SQLcnn);
             dt = new DataTable();
             SQLadapt.Fill(dt);
             dataGridView_lookup.DataSource = dt;
@@ -54,7 +54,7 @@ namespace App_info
         private DataTable GetData()
         {
             SQLcnn.Open();
-            SQLadapt = new SqlDataAdapter("SELECT * FROM Apps_Info ", SQLcnn);
+            SQLadapt = new SqlDataAdapter("SELECT * FROM App_keys ", SQLcnn);
             dt = new DataTable();
             SQLadapt.Fill(dt);
             SQLcnn.Close();
@@ -91,5 +91,37 @@ namespace App_info
             (dataGridView_lookup.DataSource as DataTable).DefaultView.RowFilter = string.Format("Software_name LIKE '%{0}%'", searchbox.Text);
 
         }
+
+        public void dataGridView_lookup_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            App_detail app_detail = new App_detail(this);
+
+            SQLcnn.Open();
+            cmd = new SqlCommand("SELECT [key] FROM App_keys WHERE [Software_name] = '" + this.dataGridView_lookup.CurrentRow.Cells[1].Value.ToString() + "'", SQLcnn);
+            int autoKey = (int)cmd.ExecuteScalar();
+            app_detail.autoKey.Text = autoKey.ToString();
+            SQLcnn.Close();
+
+            app_detail.software.Text = this.dataGridView_lookup.CurrentRow.Cells[1].Value.ToString();
+            app_detail.system1.Text = this.dataGridView_lookup.CurrentRow.Cells[2].Value.ToString();
+            app_detail.category1.Text = this.dataGridView_lookup.CurrentRow.Cells[3].Value.ToString();
+            app_detail.language.Text = this.dataGridView_lookup.CurrentRow.Cells[4].Value.ToString();
+            app_detail.type_box.SelectedItem = this.dataGridView_lookup.CurrentRow.Cells[5].Value.ToString();
+            app_detail.src_ip.Text = this.dataGridView_lookup.CurrentRow.Cells[6].Value.ToString();
+            app_detail.location_f.Text = this.dataGridView_lookup.CurrentRow.Cells[7].Value.ToString();
+            app_detail.manual_f.Text = this.dataGridView_lookup.CurrentRow.Cells[8].Value.ToString();
+            app_detail.server_ip1.Text = this.dataGridView_lookup.CurrentRow.Cells[9].Value.ToString();
+            app_detail.sql_db.Text = this.dataGridView_lookup.CurrentRow.Cells[10].Value.ToString();
+            app_detail.sql_usr.Text = this.dataGridView_lookup.CurrentRow.Cells[11].Value.ToString();
+            app_detail.sql_pwd.Text = this.dataGridView_lookup.CurrentRow.Cells[12].Value.ToString();
+            app_detail.developer1.Text = this.dataGridView_lookup.CurrentRow.Cells[13].Value.ToString();
+            app_detail.remark1.Text = this.dataGridView_lookup.CurrentRow.Cells[14].Value.ToString();
+
+            this.Hide();
+            app_detail.ShowDialog();
+            this.Show();
+            RefreshGrid();
+        }
+            
     }
 }
